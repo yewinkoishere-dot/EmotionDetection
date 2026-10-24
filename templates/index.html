@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Emotion Detector</title>
+</head>
+<body>
+    <h1>Emotion Detector</h1>
+
+    <form id="emotionForm">
+        <textarea id="textInput"
+                  placeholder="Enter text to analyze"></textarea>
+        <button type="submit">Analyze Emotion</button>
+    </form>
+
+    <pre id="result"></pre>
+
+    <script>
+        document.getElementById("emotionForm").onsubmit = async (event) => {
+            event.preventDefault();
+
+            const text = document.getElementById("textInput").value;
+            const result = document.getElementById("result");
+
+            if (!text.trim()) {
+                result.textContent = "Please enter some text to analyze.";
+                return;
+            }
+
+            try {
+                const response = await fetch(
+                    "/emotionDetector?textToAnalyze=" +
+                    encodeURIComponent(text)
+                );
+
+                const data = await response.json();
+
+                result.textContent = response.ok
+                    ? JSON.stringify(data, null, 2)
+                    : data.error;
+            } catch (error) {
+                result.textContent = "Unable to connect to the server.";
+            }
+        };
+    </script>
+</body>
+</html>
